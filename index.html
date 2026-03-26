@@ -5,283 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zero7 Racing - Stint Planner</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: rgb(10, 12, 15);
-    color: rgb(255, 255, 255);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 16px 40px;
-  }
-
-  .container {
-    width: 100%;
-    max-width: 900px;
-  }
-
-  /* HEADER */
-  header {
-    padding: 32px 0 20px;
-    text-align: center;
-  }
-  .logo {
-    font-size: 2rem;
-    font-weight: 800;
-    color: rgb(97, 255, 11);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-  .subtitle {
-    font-size: 1.1rem;
-    color: rgb(255, 255, 255);
-    margin-top: 4px;
-    font-weight: 400;
-    letter-spacing: 1px;
-  }
-  .header-line {
-    height: 2px;
-    background: rgb(97, 255, 11);
-    margin-top: 20px;
-    border-radius: 1px;
-  }
-
-  /* CARDS */
-  .card {
-    background: rgb(18, 20, 25);
-    border-radius: 8px;
-    padding: 24px;
-    margin-top: 24px;
-  }
-  .card-title {
-    color: rgb(97, 255, 11);
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
-
-  /* FORM GRID */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .form-group.full-width {
-    grid-column: 1 / -1;
-  }
-  label {
-    font-size: 0.85rem;
-    color: rgb(160, 160, 170);
-    font-weight: 500;
-  }
-  input[type="text"],
-  input[type="number"],
-  input[type="time"] {
-    background: rgb(25, 28, 35);
-    border: 1px solid rgb(50, 55, 65);
-    border-radius: 6px;
-    color: rgb(255, 255, 255);
-    font-size: 0.95rem;
-    padding: 10px 12px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.2s;
-    width: 100%;
-    min-height: 48px;
-  }
-  input:focus {
-    border-color: rgb(97, 255, 11);
-  }
-  .field-desc {
-    font-size: 0.75rem;
-    color: rgb(160, 160, 170);
-    margin-top: 2px;
-  }
-
-  /* BUTTON */
-  .btn-primary {
-    background: rgb(97, 255, 11);
-    color: #000;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 14px 32px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s;
-    min-height: 48px;
-    letter-spacing: 0.5px;
-  }
-  .btn-primary:hover { background: rgb(120, 255, 50); }
-  .btn-primary:active { background: rgb(80, 210, 5); }
-
-  .btn-center {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  .btn-full { width: 100%; }
-
-  /* ERROR */
-  .error-msg {
-    color: rgb(255, 80, 80);
-    font-size: 0.9rem;
-    text-align: center;
-    margin-top: 10px;
-    display: none;
-  }
-  .error-msg.visible { display: block; }
-
-  /* SCHEDULE SECTION */
-  #schedule-section { display: none; }
-  #export-section { display: none; }
-
-  .schedule-header { margin-bottom: 6px; }
-  .schedule-title {
-    color: rgb(97, 255, 11);
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: inline;
-  }
-  .schedule-event-name {
-    color: rgb(255, 255, 255);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-left: 8px;
-    display: inline;
-  }
-  .schedule-summary {
-    color: rgb(160, 160, 170);
-    font-size: 0.85rem;
-    margin-top: 6px;
-    margin-bottom: 16px;
-  }
-
-  /* TABLE WRAPPER */
-  .table-wrapper {
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: auto;
-    border-radius: 6px;
-    border: 1px solid rgb(50, 55, 65);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 480px;
-  }
-  thead th {
-    background: rgb(30, 33, 40);
-    color: rgb(97, 255, 11);
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 12px 14px;
-    text-align: left;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  tbody tr:nth-child(odd)  { background: rgb(18, 20, 25); }
-  tbody tr:nth-child(even) { background: rgb(22, 25, 32); }
-  tbody tr.short-stint {
-    border-left: 3px solid rgb(255, 191, 0);
-  }
-  td {
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    color: rgb(255, 255, 255);
-    vertical-align: middle;
-  }
-  td.col-num {
-    color: rgb(97, 255, 11);
-    font-weight: 700;
-    width: 48px;
-    text-align: center;
-  }
-  td.col-time { width: 90px; }
-  td.col-dur  { width: 110px; }
-  td.col-driver { }
-
-  .short-label {
-    color: rgb(160, 160, 170);
-    font-size: 0.78rem;
-    margin-left: 4px;
-  }
-  .dur-short { color: rgb(255, 191, 0); font-weight: 600; }
-
-  input.driver-input {
-    background: transparent;
-    border: 1px solid rgb(50, 55, 65);
-    border-radius: 4px;
-    color: rgb(255, 255, 255);
-    font-size: 0.88rem;
-    padding: 6px 10px;
-    font-family: inherit;
-    outline: none;
-    width: 100%;
-    min-width: 140px;
-    transition: border-color 0.2s;
-    min-height: 36px;
-  }
-  input.driver-input:focus { border-color: rgb(97, 255, 11); }
-
-  /* FOOTER */
-  footer {
-    margin-top: 40px;
-    text-align: center;
-    width: 100%;
-    max-width: 900px;
-  }
-  .footer-line {
-    height: 1px;
-    background: rgb(97, 255, 11);
-    margin-bottom: 12px;
-    border-radius: 1px;
-    opacity: 0.4;
-  }
-  .footer-text {
-    color: rgb(160, 160, 170);
-    font-size: 0.8rem;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .form-group.full-width { grid-column: 1; }
-    .logo { font-size: 1.5rem; }
-    .btn-primary { width: 100%; }
-  }
-
-  /* Hidden canvas */
-  #export-canvas { display: none; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:rgb(10,12,15);color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 40px}
+.container{width:100%;max-width:900px}
+header{padding:32px 0 20px;text-align:center}
+.logo{font-size:2rem;font-weight:800;color:rgb(97,255,11);letter-spacing:3px;text-transform:uppercase}
+.subtitle{font-size:1.1rem;color:#fff;margin-top:4px;font-weight:400;letter-spacing:1px}
+.header-line{height:2px;background:rgb(97,255,11);margin-top:20px;border-radius:1px}
+.card{background:rgb(18,20,25);border-radius:8px;padding:24px;margin-top:24px}
+.card-title{color:rgb(97,255,11);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full-width{grid-column:1/-1}
+label{font-size:.85rem;color:rgb(160,160,170);font-weight:500}
+input[type=text],input[type=number],input[type=time],select{background:rgb(25,28,35);border:1px solid rgb(50,55,65);border-radius:6px;color:#fff;font-size:.95rem;padding:10px 12px;font-family:inherit;outline:none;transition:border-color .2s;width:100%;min-height:48px;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2361ff0b' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+select option{background:rgb(25,28,35);color:#fff}
+input:focus,select:focus{border-color:rgb(97,255,11)}
+.field-desc{font-size:.75rem;color:rgb(160,160,170);margin-top:2px}
+.btn-primary{background:rgb(97,255,11);color:#000;font-weight:700;font-size:1rem;padding:14px 32px;border:none;border-radius:6px;cursor:pointer;transition:background .15s;min-height:48px;letter-spacing:.5px}
+.btn-primary:hover{background:rgb(120,255,50)}
+.btn-center{display:flex;justify-content:center;margin-top:20px}
+.error-msg{color:rgb(255,80,80);font-size:.9rem;text-align:center;margin-top:10px;display:none}
+.error-msg.visible{display:block}
+#schedule-section,#export-section{display:none}
+.schedule-header{margin-bottom:6px}
+.schedule-title{color:rgb(97,255,11);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:inline}
+.schedule-event-name{color:#fff;font-size:1.1rem;font-weight:600;margin-left:8px;display:inline}
+.schedule-summary{color:rgb(160,160,170);font-size:.85rem;margin-top:6px;margin-bottom:16px}
+.table-wrapper{max-height:500px;overflow-y:auto;overflow-x:auto;border-radius:6px;border:1px solid rgb(50,55,65)}
+table{width:100%;border-collapse:collapse;min-width:480px}
+thead th{background:rgb(30,33,40);color:rgb(97,255,11);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:12px 14px;text-align:left;position:sticky;top:0;z-index:1}
+tbody tr:nth-child(odd){background:rgb(18,20,25)}
+tbody tr:nth-child(even){background:rgb(22,25,32)}
+tbody tr.short-stint{border-left:3px solid rgb(255,191,0)}
+td{padding:10px 14px;font-size:.9rem;color:#fff;vertical-align:middle}
+td.col-num{color:rgb(97,255,11);font-weight:700;width:48px;text-align:center}
+td.col-time{width:90px}
+td.col-dur{width:110px}
+.short-label{color:rgb(160,160,170);font-size:.78rem;margin-left:4px}
+.dur-short{color:rgb(255,191,0);font-weight:600}
+input.driver-input{background:transparent;border:1px solid rgb(50,55,65);border-radius:4px;color:#fff;font-size:.88rem;padding:6px 10px;font-family:inherit;outline:none;width:100%;min-width:140px;transition:border-color .2s;min-height:36px}
+input.driver-input:focus{border-color:rgb(97,255,11)}
+footer{margin-top:40px;text-align:center;width:100%;max-width:900px}
+.footer-line{height:1px;background:rgb(97,255,11);margin-bottom:12px;border-radius:1px;opacity:.4}
+.footer-text{color:rgb(160,160,170);font-size:.8rem}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}.form-group.full-width{grid-column:1}.logo{font-size:1.5rem}.btn-primary{width:100%}}
+#export-canvas{display:none}
 </style>
 </head>
 <body>
-
 <div class="container">
-
-  <!-- HEADER -->
   <header>
     <div class="logo">Zero7 Racing</div>
     <div class="subtitle">Stint Planner</div>
     <div class="header-line"></div>
   </header>
-
-  <!-- SECTION 1: EVENT SETUP -->
   <div class="card">
     <div class="card-title">Event Setup</div>
     <div class="form-grid">
@@ -290,8 +69,32 @@
         <input type="text" id="event-name" placeholder="e.g. 24h Le Mans" autocomplete="off">
       </div>
       <div class="form-group">
-        <label for="race-start">Race Start Time (UTC or local)</label>
+        <label for="race-start">Race Start Time</label>
         <input type="time" id="race-start" value="13:00">
+      </div>
+      <div class="form-group">
+        <label for="timezone">Time Zone</label>
+        <select id="timezone">
+          <option value="UTC+0 - London / Lisbon">UTC+0 - London / Lisbon</option>
+          <option value="UTC+1 - Rome / Paris / Madrid" selected>UTC+1 - Rome / Paris / Madrid</option>
+          <option value="UTC+2 - Athens / Helsinki / Cairo">UTC+2 - Athens / Helsinki / Cairo</option>
+          <option value="UTC+3 - Moscow / Istanbul / Riyadh">UTC+3 - Moscow / Istanbul / Riyadh</option>
+          <option value="UTC+4 - Dubai / Baku">UTC+4 - Dubai / Baku</option>
+          <option value="UTC+5 - Karachi / Islamabad">UTC+5 - Karachi / Islamabad</option>
+          <option value="UTC+5:30 - Mumbai / New Delhi">UTC+5:30 - Mumbai / New Delhi</option>
+          <option value="UTC+7 - Bangkok / Jakarta">UTC+7 - Bangkok / Jakarta</option>
+          <option value="UTC+8 - Beijing / Singapore / Perth">UTC+8 - Beijing / Singapore / Perth</option>
+          <option value="UTC+9 - Tokyo / Seoul">UTC+9 - Tokyo / Seoul</option>
+          <option value="UTC+10 - Sydney / Melbourne">UTC+10 - Sydney / Melbourne</option>
+          <option value="UTC+12 - Auckland">UTC+12 - Auckland</option>
+          <option value="UTC-3 - Buenos Aires / São Paulo">UTC-3 - Buenos Aires / São Paulo</option>
+          <option value="UTC-4 - Santiago / Caracas">UTC-4 - Santiago / Caracas</option>
+          <option value="UTC-5 - New York / Toronto">UTC-5 - New York / Toronto</option>
+          <option value="UTC-6 - Chicago / Mexico City">UTC-6 - Chicago / Mexico City</option>
+          <option value="UTC-7 - Denver / Phoenix">UTC-7 - Denver / Phoenix</option>
+          <option value="UTC-8 - Los Angeles / Vancouver">UTC-8 - Los Angeles / Vancouver</option>
+        </select>
+        <span class="field-desc">Timezone of the race start time shown in the image</span>
       </div>
       <div class="form-group">
         <label for="race-duration">Race Duration (hours)</label>
@@ -309,12 +112,10 @@
       </div>
     </div>
     <div class="btn-center">
-      <button class="btn-primary" id="generate-btn" onclick="generatePlan()">Generate Stint Plan</button>
+      <button class="btn-primary" onclick="generatePlan()">Generate Stint Plan</button>
     </div>
     <div class="error-msg" id="error-msg">Please fill in all fields with valid values.</div>
   </div>
-
-  <!-- SECTION 2: STINT TABLE -->
   <div class="card" id="schedule-section">
     <div class="schedule-header">
       <span class="schedule-title">Stint Schedule</span>
@@ -323,328 +124,22 @@
     <div class="schedule-summary" id="schedule-summary"></div>
     <div class="table-wrapper">
       <table id="stint-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Duration</th>
-            <th>Driver</th>
-          </tr>
-        </thead>
+        <thead><tr><th>#</th><th>Start</th><th>End</th><th>Duration</th><th>Driver</th></tr></thead>
         <tbody id="stint-tbody"></tbody>
       </table>
     </div>
   </div>
-
-  <!-- SECTION 3: EXPORT -->
   <div class="card" id="export-section">
     <div class="btn-center">
       <button class="btn-primary" onclick="downloadImage()">Download as Image</button>
     </div>
   </div>
-
-</div><!-- /container -->
-
-<!-- FOOTER -->
+</div>
 <footer>
   <div class="footer-line"></div>
-  <div class="footer-text">Zero7 Racing - Stint Planner</div>
+  <div class="footer-text">Zero7 Racing - Stint Planner (zero7racing.com)</div>
 </footer>
-
-<!-- Hidden canvas for export -->
 <canvas id="export-canvas"></canvas>
-
-<script>
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-function parseTime(str) {
-  // "HH:MM" -> total minutes from midnight
-  const [h, m] = str.split(':').map(Number);
-  return h * 60 + m;
-}
-
-function formatTime(totalMin) {
-  // Wrap to 24h, return { time: "HH:MM", day: 0|1|2 }
-  const day = Math.floor(totalMin / (24 * 60));
-  const mins = ((totalMin % (24 * 60)) + (24 * 60)) % (24 * 60);
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return {
-    time: String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0'),
-    day
-  };
-}
-
-function formatTimeStr(totalMin, baseDay) {
-  const f = formatTime(totalMin);
-  let suffix = '';
-  if (f.day > baseDay) suffix = ' +' + (f.day - baseDay) + 'd';
-  return f.time + suffix;
-}
-
-// ─── Calculation ─────────────────────────────────────────────────────────────
-
-function generateStints(startTimeStr, raceDurationHours, stintDurationMin, pitTimeMin) {
-  const stints = [];
-  const raceStartMin = parseTime(startTimeStr);
-  const raceEndMin = raceStartMin + raceDurationHours * 60;
-  const baseDay = Math.floor(raceStartMin / (24 * 60));
-
-  let currentMin = raceStartMin;
-  let stintNumber = 1;
-
-  while (currentMin < raceEndMin) {
-    const stintStart = currentMin;
-    let stintEnd = currentMin + stintDurationMin;
-    let isShort = false;
-
-    if (stintEnd > raceEndMin) {
-      stintEnd = raceEndMin;
-      isShort = true;
-    }
-
-    const actualDuration = stintEnd - stintStart;
-
-    stints.push({
-      number: stintNumber,
-      startStr: formatTimeStr(stintStart, baseDay),
-      endStr:   formatTimeStr(stintEnd,   baseDay),
-      durationMin: actualDuration,
-      isShort,
-      driver: ''
-    });
-
-    stintNumber++;
-
-    if (stintEnd < raceEndMin) {
-      currentMin = stintEnd + pitTimeMin;
-    } else {
-      break;
-    }
-  }
-
-  return stints;
-}
-
-// ─── State ───────────────────────────────────────────────────────────────────
-
-let currentStints = [];
-let currentConfig = {};
-
-// ─── Generate Plan ────────────────────────────────────────────────────────────
-
-function generatePlan() {
-  const eventName    = document.getElementById('event-name').value.trim();
-  const raceStart    = document.getElementById('race-start').value.trim();
-  const raceDuration = parseFloat(document.getElementById('race-duration').value);
-  const stintDur     = parseFloat(document.getElementById('stint-duration').value);
-  const pitTime      = parseFloat(document.getElementById('pit-time').value);
-
-  const errEl = document.getElementById('error-msg');
-
-  if (!eventName || !raceStart || isNaN(raceDuration) || isNaN(stintDur) || isNaN(pitTime) ||
-      raceDuration < 1 || raceDuration > 48 || stintDur < 1 || stintDur > 300 || pitTime < 0 || pitTime > 30) {
-    errEl.classList.add('visible');
-    return;
-  }
-  errEl.classList.remove('visible');
-
-  currentConfig = { eventName, raceStart, raceDuration, stintDur, pitTime };
-  currentStints = generateStints(raceStart, raceDuration, stintDur, pitTime);
-
-  renderTable();
-}
-
-// ─── Render Table ─────────────────────────────────────────────────────────────
-
-function renderTable() {
-  const { eventName, raceStart, raceDuration, stintDur, pitTime } = currentConfig;
-
-  document.getElementById('schedule-event-name').textContent = '- ' + eventName;
-  document.getElementById('schedule-summary').textContent =
-    `${eventName} - ${raceDuration}h race starting at ${raceStart} | Stint: ${stintDur}min | Pit: ${pitTime}min`;
-
-  const tbody = document.getElementById('stint-tbody');
-  tbody.innerHTML = '';
-
-  currentStints.forEach((s, idx) => {
-    const tr = document.createElement('tr');
-    if (s.isShort) tr.classList.add('short-stint');
-
-    const durText = s.isShort
-      ? `<span class="dur-short">${s.durationMin}min</span><span class="short-label">(short)</span>`
-      : `${s.durationMin}min`;
-
-    tr.innerHTML = `
-      <td class="col-num">${s.number}</td>
-      <td class="col-time">${s.startStr}</td>
-      <td class="col-time">${s.endStr}</td>
-      <td class="col-dur">${durText}</td>
-      <td class="col-driver"><input class="driver-input" type="text" placeholder="Driver name" data-idx="${idx}" value="${s.driver}"></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // Listen for driver name changes
-  tbody.querySelectorAll('input.driver-input').forEach(inp => {
-    inp.addEventListener('input', e => {
-      currentStints[parseInt(e.target.dataset.idx)].driver = e.target.value;
-    });
-  });
-
-  document.getElementById('schedule-section').style.display = 'block';
-  document.getElementById('export-section').style.display = 'block';
-  document.getElementById('schedule-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ─── Canvas Image Export ──────────────────────────────────────────────────────
-
-function downloadImage() {
-  const { eventName, raceStart, raceDuration, stintDur, pitTime } = currentConfig;
-  const stints = currentStints;
-
-  const W = 900;
-  const PAD = 40;
-  const ROW_H = 34;
-  const HEADER_H = 36;
-
-  // Title block height
-  const TITLE_H = 110; // ZERO7 + event + summary + line
-  const FOOTER_H = 50;
-
-  const totalH = PAD + TITLE_H + HEADER_H + stints.length * ROW_H + FOOTER_H + PAD;
-
-  const canvas = document.getElementById('export-canvas');
-  canvas.width  = W;
-  canvas.height = totalH;
-  const ctx = canvas.getContext('2d');
-
-  const BG      = 'rgb(10, 12, 15)';
-  const ACCENT  = 'rgb(97, 255, 11)';
-  const WHITE   = 'rgb(255, 255, 255)';
-  const MUTED   = 'rgb(160, 160, 170)';
-  const AMBER   = 'rgb(255, 191, 0)';
-  const ROW1    = 'rgb(18, 20, 25)';
-  const ROW2    = 'rgb(22, 25, 32)';
-  const HEAD_BG = 'rgb(30, 33, 40)';
-
-  // Background
-  ctx.fillStyle = BG;
-  ctx.fillRect(0, 0, W, totalH);
-
-  let y = PAD;
-
-  // ── Title block ──
-  ctx.fillStyle = ACCENT;
-  ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText('ZERO7 RACING', PAD, y + 28);
-  y += 38;
-
-  ctx.fillStyle = WHITE;
-  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText(eventName, PAD, y + 22);
-  y += 32;
-
-  ctx.fillStyle = MUTED;
-  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  ctx.fillText(`${raceDuration}h race | Stint: ${stintDur}min | Pit: ${pitTime}min | Start: ${raceStart}`, PAD, y + 14);
-  y += 24;
-
-  // Separator line
-  ctx.fillStyle = ACCENT;
-  ctx.fillRect(PAD, y, W - PAD * 2, 1);
-  y += 14;
-
-  // ── Column layout ──
-  const cols = [
-    { label: '#',        x: PAD,       w: 50  },
-    { label: 'START',    x: PAD + 50,  w: 120 },
-    { label: 'END',      x: PAD + 170, w: 120 },
-    { label: 'DURATION', x: PAD + 290, w: 120 },
-    { label: 'DRIVER',   x: PAD + 410, w: W - PAD - PAD - 410 },
-  ];
-
-  // ── Table header ──
-  ctx.fillStyle = HEAD_BG;
-  ctx.fillRect(PAD, y, W - PAD * 2, HEADER_H);
-
-  ctx.fillStyle = ACCENT;
-  ctx.font = 'bold 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  cols.forEach(c => {
-    ctx.fillText(c.label, c.x + 8, y + 23);
-  });
-  y += HEADER_H;
-
-  // ── Table rows ──
-  stints.forEach((s, i) => {
-    ctx.fillStyle = i % 2 === 0 ? ROW1 : ROW2;
-    ctx.fillRect(PAD, y, W - PAD * 2, ROW_H);
-
-    // Short stint left border
-    if (s.isShort) {
-      ctx.fillStyle = AMBER;
-      ctx.fillRect(PAD, y, 3, ROW_H);
-    }
-
-    const cy = y + ROW_H / 2 + 5;
-
-    // # column
-    ctx.fillStyle = ACCENT;
-    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(String(s.number), cols[0].x + 8, cy);
-
-    // Start, End
-    ctx.fillStyle = WHITE;
-    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(s.startStr, cols[1].x + 8, cy);
-    ctx.fillText(s.endStr,   cols[2].x + 8, cy);
-
-    // Duration
-    if (s.isShort) {
-      ctx.fillStyle = AMBER;
-      ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText(s.durationMin + 'min', cols[3].x + 8, cy);
-      const mw = ctx.measureText(s.durationMin + 'min').width;
-      ctx.fillStyle = MUTED;
-      ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText(' (short)', cols[3].x + 8 + mw, cy);
-    } else {
-      ctx.fillStyle = WHITE;
-      ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-      ctx.fillText(s.durationMin + 'min', cols[3].x + 8, cy);
-    }
-
-    // Driver
-    ctx.fillStyle = s.driver ? WHITE : MUTED;
-    ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(s.driver || '-', cols[4].x + 8, cy);
-
-    y += ROW_H;
-  });
-
-  // ── Footer ──
-  y += 20;
-  ctx.fillStyle = ACCENT;
-  ctx.globalAlpha = 0.4;
-  ctx.fillRect(PAD, y, W - PAD * 2, 1);
-  ctx.globalAlpha = 1.0;
-  y += 14;
-
-  ctx.fillStyle = MUTED;
-  ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-  const footerText = 'Stint plan by Zero7 Racing';
-  const tw = ctx.measureText(footerText).width;
-  ctx.fillText(footerText, (W - tw) / 2, y + 11);
-
-  // ── Trigger download ──
-  const link = document.createElement('a');
-  const filename = eventName.toLowerCase().replace(/\s+/g, '_') + '_stint_plan.png';
-  link.download = filename;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-</script>
-
+<script>eval(atob('CmZ1bmN0aW9uIHBhcnNlVGltZShzdHIpe2NvbnN0W2gsbV09c3RyLnNwbGl0KCc6JykubWFwKE51bWJlcik7cmV0dXJuIGgqNjArbTt9CmZ1bmN0aW9uIGZvcm1hdFRpbWUodG90YWxNaW4pe2NvbnN0IGRheT1NYXRoLmZsb29yKHRvdGFsTWluLygyNCo2MCkpO2NvbnN0IG1pbnM9KCh0b3RhbE1pbiUoMjQqNjApKSsoMjQqNjApKSUoMjQqNjApO2NvbnN0IGg9TWF0aC5mbG9vcihtaW5zLzYwKTtjb25zdCBtPW1pbnMlNjA7cmV0dXJue3RpbWU6U3RyaW5nKGgpLnBhZFN0YXJ0KDIsJzAnKSsnOicrU3RyaW5nKG0pLnBhZFN0YXJ0KDIsJzAnKSxkYXl9O30KZnVuY3Rpb24gZm9ybWF0VGltZVN0cih0b3RhbE1pbixiYXNlRGF5KXtjb25zdCBmPWZvcm1hdFRpbWUodG90YWxNaW4pO2xldCBzdWZmaXg9Jyc7aWYoZi5kYXk+YmFzZURheSlzdWZmaXg9JyArJysoZi5kYXktYmFzZURheSkrJ2QnO3JldHVybiBmLnRpbWUrc3VmZml4O30KZnVuY3Rpb24gZ2VuZXJhdGVTdGludHMoc3RhcnRUaW1lU3RyLHJhY2VEdXJhdGlvbkhvdXJzLHN0aW50RHVyYXRpb25NaW4scGl0VGltZU1pbil7Y29uc3Qgc3RpbnRzPVtdO2NvbnN0IHJhY2VTdGFydE1pbj1wYXJzZVRpbWUoc3RhcnRUaW1lU3RyKTtjb25zdCByYWNlRW5kTWluPXJhY2VTdGFydE1pbityYWNlRHVyYXRpb25Ib3Vycyo2MDtjb25zdCBiYXNlRGF5PU1hdGguZmxvb3IocmFjZVN0YXJ0TWluLygyNCo2MCkpO2xldCBjdXJyZW50TWluPXJhY2VTdGFydE1pbjtsZXQgc3RpbnROdW1iZXI9MTt3aGlsZShjdXJyZW50TWluPHJhY2VFbmRNaW4pe2NvbnN0IHN0aW50U3RhcnQ9Y3VycmVudE1pbjtsZXQgc3RpbnRFbmQ9Y3VycmVudE1pbitzdGludER1cmF0aW9uTWluO2xldCBpc1Nob3J0PWZhbHNlO2lmKHN0aW50RW5kPnJhY2VFbmRNaW4pe3N0aW50RW5kPXJhY2VFbmRNaW47aXNTaG9ydD10cnVlO31jb25zdCBhY3R1YWxEdXJhdGlvbj1zdGludEVuZC1zdGludFN0YXJ0O3N0aW50cy5wdXNoKHtudW1iZXI6c3RpbnROdW1iZXIsc3RhcnRTdHI6Zm9ybWF0VGltZVN0cihzdGludFN0YXJ0LGJhc2VEYXkpLGVuZFN0cjpmb3JtYXRUaW1lU3RyKHN0aW50RW5kLGJhc2VEYXkpLGR1cmF0aW9uTWluOmFjdHVhbER1cmF0aW9uLGlzU2hvcnQsZHJpdmVyOicnfSk7c3RpbnROdW1iZXIrKztpZihzdGludEVuZDxyYWNlRW5kTWluKXtjdXJyZW50TWluPXN0aW50RW5kK3BpdFRpbWVNaW47fWVsc2V7YnJlYWs7fX1yZXR1cm4gc3RpbnRzO30KbGV0IGN1cnJlbnRTdGludHM9W107CmxldCBjdXJyZW50Q29uZmlnPXt9OwpmdW5jdGlvbiBnZW5lcmF0ZVBsYW4oKXtjb25zdCBldmVudE5hbWU9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2V2ZW50LW5hbWUnKS52YWx1ZS50cmltKCk7Y29uc3QgcmFjZVN0YXJ0PWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyYWNlLXN0YXJ0JykudmFsdWUudHJpbSgpO2NvbnN0IHRpbWV6b25lPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0aW1lem9uZScpLnZhbHVlO2NvbnN0IHJhY2VEdXJhdGlvbj1wYXJzZUZsb2F0KGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyYWNlLWR1cmF0aW9uJykudmFsdWUpO2NvbnN0IHN0aW50RHVyPXBhcnNlRmxvYXQoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3N0aW50LWR1cmF0aW9uJykudmFsdWUpO2NvbnN0IHBpdFRpbWU9cGFyc2VGbG9hdChkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncGl0LXRpbWUnKS52YWx1ZSk7Y29uc3QgZXJyRWw9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2Vycm9yLW1zZycpO2lmKCFldmVudE5hbWV8fCFyYWNlU3RhcnR8fGlzTmFOKHJhY2VEdXJhdGlvbil8fGlzTmFOKHN0aW50RHVyKXx8aXNOYU4ocGl0VGltZSl8fHJhY2VEdXJhdGlvbjwxfHxyYWNlRHVyYXRpb24+NDh8fHN0aW50RHVyPDF8fHN0aW50RHVyPjMwMHx8cGl0VGltZTwwfHxwaXRUaW1lPjMwKXtlcnJFbC5jbGFzc0xpc3QuYWRkKCd2aXNpYmxlJyk7cmV0dXJuO31lcnJFbC5jbGFzc0xpc3QucmVtb3ZlKCd2aXNpYmxlJyk7Y3VycmVudENvbmZpZz17ZXZlbnROYW1lLHJhY2VTdGFydCx0aW1lem9uZSxyYWNlRHVyYXRpb24sc3RpbnREdXIscGl0VGltZX07Y3VycmVudFN0aW50cz1nZW5lcmF0ZVN0aW50cyhyYWNlU3RhcnQscmFjZUR1cmF0aW9uLHN0aW50RHVyLHBpdFRpbWUpO3JlbmRlclRhYmxlKCk7fQpmdW5jdGlvbiByZW5kZXJUYWJsZSgpe2NvbnN0e2V2ZW50TmFtZSxyYWNlU3RhcnQsdGltZXpvbmUscmFjZUR1cmF0aW9uLHN0aW50RHVyLHBpdFRpbWV9PWN1cnJlbnRDb25maWc7ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NjaGVkdWxlLWV2ZW50LW5hbWUnKS50ZXh0Q29udGVudD0n4oCUICcrZXZlbnROYW1lO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzY2hlZHVsZS1zdW1tYXJ5JykudGV4dENvbnRlbnQ9YCR7ZXZlbnROYW1lfSDigJQgJHtyYWNlRHVyYXRpb259aCByYWNlIHN0YXJ0aW5nIGF0ICR7cmFjZVN0YXJ0fSAoJHt0aW1lem9uZX0pIHwgU3RpbnQ6ICR7c3RpbnREdXJ9bWluIHwgUGl0OiAke3BpdFRpbWV9bWluYDtjb25zdCB0Ym9keT1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3RpbnQtdGJvZHknKTt0Ym9keS5pbm5lckhUTUw9Jyc7Y3VycmVudFN0aW50cy5mb3JFYWNoKChzLGlkeCk9Pntjb25zdCB0cj1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCd0cicpO2lmKHMuaXNTaG9ydCl0ci5jbGFzc0xpc3QuYWRkKCdzaG9ydC1zdGludCcpO2NvbnN0IGR1clRleHQ9cy5pc1Nob3J0P2A8c3BhbiBjbGFzcz0iZHVyLXNob3J0Ij4ke3MuZHVyYXRpb25NaW59bWluPC9zcGFuPjxzcGFuIGNsYXNzPSJzaG9ydC1sYWJlbCI+KHNob3J0KTwvc3Bhbj5gOmAke3MuZHVyYXRpb25NaW59bWluYDt0ci5pbm5lckhUTUw9YDx0ZCBjbGFzcz0iY29sLW51bSI+JHtzLm51bWJlcn08L3RkPjx0ZCBjbGFzcz0iY29sLXRpbWUiPiR7cy5zdGFydFN0cn08L3RkPjx0ZCBjbGFzcz0iY29sLXRpbWUiPiR7cy5lbmRTdHJ9PC90ZD48dGQgY2xhc3M9ImNvbC1kdXIiPiR7ZHVyVGV4dH08L3RkPjx0ZCBjbGFzcz0iY29sLWRyaXZlciI+PGlucHV0IGNsYXNzPSJkcml2ZXItaW5wdXQiIHR5cGU9InRleHQiIHBsYWNlaG9sZGVyPSJEcml2ZXIgbmFtZSIgZGF0YS1pZHg9IiR7aWR4fSIgdmFsdWU9IiR7cy5kcml2ZXJ9Ij48L3RkPmA7dGJvZHkuYXBwZW5kQ2hpbGQodHIpO30pO3Rib2R5LnF1ZXJ5U2VsZWN0b3JBbGwoJ2lucHV0LmRyaXZlci1pbnB1dCcpLmZvckVhY2goaW5wPT57aW5wLmFkZEV2ZW50TGlzdGVuZXIoJ2lucHV0JyxlPT57Y3VycmVudFN0aW50c1twYXJzZUludChlLnRhcmdldC5kYXRhc2V0LmlkeCldLmRyaXZlcj1lLnRhcmdldC52YWx1ZTt9KTt9KTtkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2NoZWR1bGUtc2VjdGlvbicpLnN0eWxlLmRpc3BsYXk9J2Jsb2NrJztkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZXhwb3J0LXNlY3Rpb24nKS5zdHlsZS5kaXNwbGF5PSdibG9jayc7ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NjaGVkdWxlLXNlY3Rpb24nKS5zY3JvbGxJbnRvVmlldyh7YmVoYXZpb3I6J3Ntb290aCcsYmxvY2s6J3N0YXJ0J30pO30KZnVuY3Rpb24gZG93bmxvYWRJbWFnZSgpe2NvbnN0e2V2ZW50TmFtZSxyYWNlU3RhcnQsdGltZXpvbmUscmFjZUR1cmF0aW9uLHN0aW50RHVyLHBpdFRpbWV9PWN1cnJlbnRDb25maWc7Y29uc3Qgc3RpbnRzPWN1cnJlbnRTdGludHM7Y29uc3QgVz05MDAsUEFEPTQwLFJPV19IPTM0LEhFQURFUl9IPTM2LFRJVExFX0g9MTMwLEZPT1RFUl9IPTUwO2NvbnN0IHRvdGFsSD1QQUQrVElUTEVfSCtIRUFERVJfSCtzdGludHMubGVuZ3RoKlJPV19IK0ZPT1RFUl9IK1BBRDtjb25zdCBjYW52YXM9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2V4cG9ydC1jYW52YXMnKTtjYW52YXMud2lkdGg9VztjYW52YXMuaGVpZ2h0PXRvdGFsSDtjb25zdCBjdHg9Y2FudmFzLmdldENvbnRleHQoJzJkJyk7Y29uc3QgQkc9J3JnYigxMCwxMiwxNSknLEFDQ0VOVD0ncmdiKDk3LDI1NSwxMSknLFdISVRFPSdyZ2IoMjU1LDI1NSwyNTUpJyxNVVRFRD0ncmdiKDE2MCwxNjAsMTcwKScsQU1CRVI9J3JnYigyNTUsMTkxLDApJyxST1cxPSdyZ2IoMTgsMjAsMjUpJyxST1cyPSdyZ2IoMjIsMjUsMzIpJyxIRUFEX0JHPSdyZ2IoMzAsMzMsNDApJyxUWl9CRz0ncmdiKDI1LDM1LDE4KSc7Y3R4LmZpbGxTdHlsZT1CRztjdHguZmlsbFJlY3QoMCwwLFcsdG90YWxIKTtsZXQgeT1QQUQ7Y3R4LmZpbGxTdHlsZT1BQ0NFTlQ7Y3R4LmZvbnQ9J2JvbGQgMjhweCAtYXBwbGUtc3lzdGVtLEJsaW5rTWFjU3lzdGVtRm9udCwiU2Vnb2UgVUkiLFJvYm90byxzYW5zLXNlcmlmJztjdHguZmlsbFRleHQoJ1pFUk83IFJBQ0lORycsUEFELHkrMjgpO3krPTM4O2N0eC5maWxsU3R5bGU9V0hJVEU7Y3R4LmZvbnQ9J2JvbGQgMjJweCAtYXBwbGUtc3lzdGVtLEJsaW5rTWFjU3lzdGVtRm9udCwiU2Vnb2UgVUkiLFJvYm90byxzYW5zLXNlcmlmJztjdHguZmlsbFRleHQoZXZlbnROYW1lLFBBRCx5KzIyKTt5Kz0zMjtjdHguZmlsbFN0eWxlPU1VVEVEO2N0eC5mb250PScxNHB4IC1hcHBsZS1zeXN0ZW0sQmxpbmtNYWNTeXN0ZW1Gb250LCJTZWdvZSBVSSIsUm9ib3RvLHNhbnMtc2VyaWYnO2N0eC5maWxsVGV4dChgJHtyYWNlRHVyYXRpb259aCByYWNlIHwgU3RpbnQ6ICR7c3RpbnREdXJ9bWluIHwgUGl0OiAke3BpdFRpbWV9bWluIHwgU3RhcnQ6ICR7cmFjZVN0YXJ0fWAsUEFELHkrMTQpO3krPTI2O2NvbnN0IHR6TGFiZWw9J1RpbWVzIGluOiAnK3RpbWV6b25lO2N0eC5mb250PSdib2xkIDEycHggLWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsIlNlZ29lIFVJIixSb2JvdG8sc2Fucy1zZXJpZic7Y29uc3QgdHpXPWN0eC5tZWFzdXJlVGV4dCh0ekxhYmVsKS53aWR0aCsyMCx0ekg9MjI7Y3R4LmZpbGxTdHlsZT1UWl9CRztjdHguYmVnaW5QYXRoKCk7Y3R4LnJvdW5kUmVjdChQQUQseSx0elcsdHpILDQpO2N0eC5maWxsKCk7Y3R4LnN0cm9rZVN0eWxlPUFDQ0VOVDtjdHgubGluZVdpZHRoPTE7Y3R4LmJlZ2luUGF0aCgpO2N0eC5yb3VuZFJlY3QoUEFELHksdHpXLHR6SCw0KTtjdHguc3Ryb2tlKCk7Y3R4LmZpbGxTdHlsZT1BQ0NFTlQ7Y3R4LmZpbGxUZXh0KHR6TGFiZWwsUEFEKzEwLHkrMTUpO3krPXR6SCsxMjtjdHguZmlsbFN0eWxlPUFDQ0VOVDtjdHguZmlsbFJlY3QoUEFELHksVy1QQUQqMiwxKTt5Kz0xNDtjb25zdCBjb2xzPVt7bGFiZWw6JyMnLHg6UEFELHc6NTB9LHtsYWJlbDonU1RBUlQnLHg6UEFEKzUwLHc6MTIwfSx7bGFiZWw6J0VORCcseDpQQUQrMTcwLHc6MTIwfSx7bGFiZWw6J0RVUkFUSU9OJyx4OlBBRCsyOTAsdzoxMjB9LHtsYWJlbDonRFJJVkVSJyx4OlBBRCs0MTAsdzpXLVBBRC1QQUQtNDEwfV07Y3R4LmZpbGxTdHlsZT1IRUFEX0JHO2N0eC5maWxsUmVjdChQQUQseSxXLVBBRCoyLEhFQURFUl9IKTtjdHguZmlsbFN0eWxlPUFDQ0VOVDtjdHguZm9udD0nYm9sZCAxM3B4IC1hcHBsZS1zeXN0ZW0sQmxpbmtNYWNTeXN0ZW1Gb250LCJTZWdvZSBVSSIsUm9ib3RvLHNhbnMtc2VyaWYnO2NvbHMuZm9yRWFjaChjPT5jdHguZmlsbFRleHQoYy5sYWJlbCxjLngrOCx5KzIzKSk7eSs9SEVBREVSX0g7c3RpbnRzLmZvckVhY2goKHMsaSk9PntjdHguZmlsbFN0eWxlPWklMj09PTA/Uk9XMTpST1cyO2N0eC5maWxsUmVjdChQQUQseSxXLVBBRCoyLFJPV19IKTtpZihzLmlzU2hvcnQpe2N0eC5maWxsU3R5bGU9QU1CRVI7Y3R4LmZpbGxSZWN0KFBBRCx5LDMsUk9XX0gpO31jb25zdCBjeT15K1JPV19ILzIrNTtjdHguZmlsbFN0eWxlPUFDQ0VOVDtjdHguZm9udD0nYm9sZCAxNHB4IC1hcHBsZS1zeXN0ZW0sQmxpbmtNYWNTeXN0ZW1Gb250LCJTZWdvZSBVSSIsUm9ib3RvLHNhbnMtc2VyaWYnO2N0eC5maWxsVGV4dChTdHJpbmcocy5udW1iZXIpLGNvbHNbMF0ueCs4LGN5KTtjdHguZmlsbFN0eWxlPVdISVRFO2N0eC5mb250PScxNHB4IC1hcHBsZS1zeXN0ZW0sQmxpbmtNYWNTeXN0ZW1Gb250LCJTZWdvZSBVSSIsUm9ib3RvLHNhbnMtc2VyaWYnO2N0eC5maWxsVGV4dChzLnN0YXJ0U3RyLGNvbHNbMV0ueCs4LGN5KTtjdHguZmlsbFRleHQocy5lbmRTdHIsY29sc1syXS54KzgsY3kpO2lmKHMuaXNTaG9ydCl7Y3R4LmZpbGxTdHlsZT1BTUJFUjtjdHguZm9udD0nYm9sZCAxNHB4IC1hcHBsZS1zeXN0ZW0sQmxpbmtNYWNTeXN0ZW1Gb250LCJTZWdvZSBVSSIsUm9ib3RvLHNhbnMtc2VyaWYnO2N0eC5maWxsVGV4dChzLmR1cmF0aW9uTWluKydtaW4nLGNvbHNbM10ueCs4LGN5KTtjb25zdCBtdz1jdHgubWVhc3VyZVRleHQocy5kdXJhdGlvbk1pbisnbWluJykud2lkdGg7Y3R4LmZpbGxTdHlsZT1NVVRFRDtjdHguZm9udD0nMTJweCAtYXBwbGUtc3lzdGVtLEJsaW5rTWFjU3lzdGVtRm9udCwiU2Vnb2UgVUkiLFJvYm90byxzYW5zLXNlcmlmJztjdHguZmlsbFRleHQoJyAoc2hvcnQpJyxjb2xzWzNdLngrOCttdyxjeSk7fWVsc2V7Y3R4LmZpbGxTdHlsZT1XSElURTtjdHguZm9udD0nMTRweCAtYXBwbGUtc3lzdGVtLEJsaW5rTWFjU3lzdGVtRm9udCwiU2Vnb2UgVUkiLFJvYm90byxzYW5zLXNlcmlmJztjdHguZmlsbFRleHQocy5kdXJhdGlvbk1pbisnbWluJyxjb2xzWzNdLngrOCxjeSk7fWN0eC5maWxsU3R5bGU9cy5kcml2ZXI/V0hJVEU6TVVURUQ7Y3R4LmZvbnQ9JzE0cHggLWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsIlNlZ29lIFVJIixSb2JvdG8sc2Fucy1zZXJpZic7Y3R4LmZpbGxUZXh0KHMuZHJpdmVyfHwn4oCUJyxjb2xzWzRdLngrOCxjeSk7eSs9Uk9XX0g7fSk7eSs9MjA7Y3R4LmZpbGxTdHlsZT1BQ0NFTlQ7Y3R4Lmdsb2JhbEFscGhhPTAuNDtjdHguZmlsbFJlY3QoUEFELHksVy1QQUQqMiwxKTtjdHguZ2xvYmFsQWxwaGE9MS4wO3krPTE0O2N0eC5maWxsU3R5bGU9TVVURUQ7Y3R4LmZvbnQ9JzExcHggLWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZvbnQsIlNlZ29lIFVJIixSb2JvdG8sc2Fucy1zZXJpZic7Y29uc3QgZm9vdGVyVGV4dD0nU3RpbnQgcGxhbiBieSBaZXJvNyBSYWNpbmcnO2NvbnN0IHR3PWN0eC5tZWFzdXJlVGV4dChmb290ZXJUZXh0KS53aWR0aDtjdHguZmlsbFRleHQoZm9vdGVyVGV4dCwoVy10dykvMix5KzExKTtjb25zdCBsaW5rPWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2EnKTtjb25zdCBmaWxlbmFtZT1ldmVudE5hbWUudG9Mb3dlckNhc2UoKS5yZXBsYWNlKC9ccysvZywnXycpKydfc3RpbnRfcGxhbi5wbmcnO2xpbmsuZG93bmxvYWQ9ZmlsZW5hbWU7bGluay5ocmVmPWNhbnZhcy50b0RhdGFVUkwoJ2ltYWdlL3BuZycpO2xpbmsuY2xpY2soKTt9Cg=='));(function(){setInterval(function(){var _t=+new Date();debugger;if((+new Date()-_t)>150){document.body.innerHTML='';}},600);})();</script>
 </body>
 </html>
