@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zero7 Racing — Stint Planner</title>
+<title>Zero7 Racing - Stint Planner</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -349,7 +349,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-line"></div>
-  <div class="footer-text">Zero7 Racing — Stint Planner</div>
+  <div class="footer-text">Zero7 Racing - Stint Planner</div>
 </footer>
 
 <!-- Hidden canvas for export -->
@@ -461,9 +461,9 @@ function generatePlan() {
 function renderTable() {
   const { eventName, raceStart, raceDuration, stintDur, pitTime } = currentConfig;
 
-  document.getElementById('schedule-event-name').textContent = '— ' + eventName;
+  document.getElementById('schedule-event-name').textContent = '- ' + eventName;
   document.getElementById('schedule-summary').textContent =
-    `${eventName} — ${raceDuration}h race starting at ${raceStart} | Stint: ${stintDur}min | Pit: ${pitTime}min`;
+    `${eventName} - ${raceDuration}h race starting at ${raceStart} | Stint: ${stintDur}min | Pit: ${pitTime}min`;
 
   const tbody = document.getElementById('stint-tbody');
   tbody.innerHTML = '';
@@ -618,7 +618,7 @@ function downloadImage() {
     // Driver
     ctx.fillStyle = s.driver ? WHITE : MUTED;
     ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(s.driver || '—', cols[4].x + 8, cy);
+    ctx.fillText(s.driver || '-', cols[4].x + 8, cy);
 
     y += ROW_H;
   });
